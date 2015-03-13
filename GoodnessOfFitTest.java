@@ -1,115 +1,256 @@
-import java.sql.Connection; 
-import java.sql.DriverManager; 
-import java.sql.PreparedStatement; 
-import java.sql.ResultSet; 
-import java.sql.SQLException; 
-import java.sql.Statement;
-
-import leanJAVA.connectSQL;
-
-public class connectSQL {
-	private Connection con = null; //Database objects 
-	  //連接object 
-	  private Statement stat = null; 
-	  //執行,傳入之sql為完整字串 
-	  private ResultSet rs = null; 
-	  //結果集 
-	  private PreparedStatement pst = null; 
-	  //執行,傳入之sql為預儲之字申,需要傳入變數之位置 
-	  //先利用?來做標示 
-	
-	public static void main(String[] args) {
-		connectSQL test = new connectSQL();
-	}
-
-	/*
-	 * 程式目的：建立虛無假設與對立假設
-	 * 程式說明：
-	 * 			1.從資料庫讀取虛無假設與對立假設實驗設定值
-	 * 				1.1 和資料庫進行連線
-	 * 				1.2讀取虛無假設數值與對立假設數值
-	 * 				1.3將讀取虛無假設數值與對立假設數值寫入實驗紀錄表
-	 * 				1.4結束連線
-	 * 				1.5回傳虛無假設與對立假設數值給主程式
-	 */
-
-	private connectSQL() 
-	  { 
-		
-		try { 
-	    	/*
-	    	 * 註冊Java連線mysql的驅動程式 
-	    	 */
-	      Class.forName("com.mysql.jdbc.Driver"); 
-	      	/*
-	      	 * 取得connection格式如下
-	      	 * DriverManager.getConnection("jdbc:mysql://[伺服器名稱:Port號]/[資料庫名稱]?useUnicode=true&characterEncoding=[編碼格式]", 
-	      	 * "[使用者帳戶]","[使用者密碼]")
-	      	 */
-	      con = DriverManager.getConnection( 
-	      "jdbc:mysql://localhost:5432/test?useUnicode=true&characterEncoding=utf8", 
-	      "root",""); 
-	      
-	    	} 
-	    		/*
-	    		 *  如果找不到mysql的驅動程式發出例外訊息
-	    		 */
-	    		catch(ClassNotFoundException ex1) 
-	    		{ 
-	    			System.out.println("DriverClassNotFound :"+ex1.toString()); 
-	    		}
-	    		/*
-	    		 *  如果找不到SQL發出例外訊息
-	    		 */
-	    		catch(SQLException ex2) 
-	    		{ 
-	    			System.out.println("Exception :"+ex2.toString()); 
-	    		} 
-	  }
-	/*
-	 * 程式目的：設定信心水準
-	 * 程式說明：
-	 * 			1.從資料庫讀取信心水準並回傳給主程式
-	 * 				1.1 和資料庫進行連線
-	 * 				1.2讀取信心水準數值
-	 * 				1.3將讀取信心水準數值寫入實驗紀錄表
-	 * 				1.4結束連線
-	 * 				1.5回傳信心水準數值給主程式
-	 */
-	
-	/*
-	 * 程式目的：設定信心水準
-	 * 程式說明：
-	 * 			1.從資料庫讀取信心水準並回傳給主程式
-	 * 				1.1 和資料庫進行連線
-	 * 				1.2讀取信心水準數值
-	 * 				1.3將讀取信心水準數值寫入實驗紀錄表
-	 * 				1.4結束連線
-	 * 				1.5回傳信心水準數值給主程式
-	 */
-	
+import java.math.*;
+public class GoodnessOfFitTest{
 	/*
 	 * 程式目的：進行卡方適切性檢定
 	 * 程式說明：
-	 * 			1.從資料庫讀取實驗原始數據
-	 * 				1.1 和資料庫進行連線
-	 * 				1.2讀取信心水準數值
-	 * 				1.3將讀取信心水準數值寫入實驗紀錄表
-	 * 				1.4結束連線
-	 * 				1.5回傳信心水準數值給主程式
-	 * 			2.將實驗數據依照 Sturge's rule決定組數
-	 * 				公式為k=1+3.32log(n), k是組數;n是樣本數
-	 * 			3.決定各組別的上界(upper bound)與下界(lower bound)並依照連續型資料型態調修正每組的上界與下界。
-	 * 			4.計算每一組的實際觀察值(Oi), i代表第幾組資料的編號i,i={1,2,..., k }or {1,2,..., k+1}。
-	 * 			5.計算每一組的理論觀察值(Ei), i代表第幾組資料的編號i,i={1,2,..., k }or {1,2,..., k+1}。
-	 * 			6.計算統計量值 sum_i=1 ^ i=k or k+1 frac{(Oi-Ei)^2 }{Ei}。
-	 * 			7.若大於統計量值的機率比信賴水準高或等於，則回傳拒絕宣聲，意謂實驗數據和特定平均數與變異數的常態分佈不吻合。
-	 * 			  反之， 若小於等於統計量值的機率比信賴水準低，則回傳不拒絕宣聲，意謂沒有足夠證實實驗數據和特定平均數與變異數的常態分佈不吻合
-	 * 			 即目前接受實驗數據和特定平均數與變異數的常態分佈吻合的宣稱。
-	 * 			8.將實驗紀錄寫入到實驗紀錄表
-	 * 				8.1 和資料庫進行連線
-	 * 				8.2將檢定統計量值和檢定結果寫入實驗紀錄表
-	 * 				8.4結束連線
-	 * 				8.5回傳"第xxx筆實驗已經完成"給主程式
+	 * 			Step0.決定實驗樣本數(n)
+	 * 			Step1.輸入虛無假設與對立假設實驗設定值
+	 * 			Step2.輸入信心水準(1 - alpha %)
+	 * 			Step3.計算檢定統計量值
+	 * 				Step3.1.將機率函數切割成不同組，組數為k(組數在5~10之間)
+	 * 						將欲檢定的常態分配機率分成K組，第k組的機率為積分常態分配，k=1, 2, 3, ..., k
+	 * 						下限(lower bound)為第k-1的值；上限(upper bound)為第k的值。
+	 * 				Step3.2.計算各組理論次數(e_{i})
+	 * 						Step3.2.1. 計算理論出現次數
+	 * 							        第k組出線的理論次數為第k組的理論次數e_{i}
+	 * 				Step3.3.計算各組實際觀察次數(o_{i})
+	 * 				Step3.4.計算統計量值 \sum_{i=1}^{k}  \frac{((o_{i}-e_{i})^(2))}{e_{i}}
+	 * 			Step4. 計算P-value
+	 * 			Step5. 檢定結果
+	 * 			
 	 */
+	public static void main(String[] args) {
+
+		/*
+		 *  Step0.決定實驗樣本數(n)
+		 */
+		System.out.println("請輸入實驗樣本數(n)");
+		java.util.Scanner SampleNumInputData = new
+                java.util.Scanner(System.in);
+				int SampleNumInput = SampleNumInputData.nextInt();
+		System.out.println("您輸入的樣本數為："+SampleNumInput);
+		
+		/*
+		 * Step1.輸入虛無假設與對立假設實驗設定值
+		 */
+		System.out.println("請輸入要檢定的常態分布的平均數值 (mu)");
+		java.util.Scanner muInputData = new
+                java.util.Scanner(System.in);
+				double muInput = muInputData.nextDouble();
+		System.out.println("請輸入要檢定的常態分布的變異數值 (sigma)");
+		java.util.Scanner sigmaInputData = new
+		        java.util.Scanner(System.in);
+				double sigmaInput = sigmaInputData.nextDouble();
+		System.out.println("你要檢定的常態分布的平均數值 (mu)為"+muInput+"變異數值 (sigma)為"+sigmaInput);
+		System.out.println("虛無假設(H_{0})為該觀察資料符合常態分布平均數"+muInput+"變異數"+sigmaInput);
+		/*
+		 * Step2.輸入信心水準(1 - alpha %)
+		 */
+		System.out.println("請輸入信心水準(Confidence level; 1 - alpha %)");
+		java.util.Scanner ConfidenceLevelInputData = new
+        	java.util.Scanner(System.in);
+		double ConfidenceLevelInput = ConfidenceLevelInputData.nextDouble();
+		System.out.println("你輸入的信心水準為"+ConfidenceLevelInput);
+			double alpha = 1- ConfidenceLevelInput;
+		// System.out.println("alpha為"+alpha); //檢查用
+			
+		/*
+		 *   Step3.計算檢定統計量值
+		 */
+			
+			/*
+			 * Step3.1.將機率函數切割成不同組，組數為k(組數在5~10之間)
+			 * 
+			 * k=1 ;  -infinite ~ mu-4sigma
+			 * k=2 ;  mu-4sigma ~ mu-3sigma
+			 * k=3 ;  mu-3sigma ~ mu-2sigma
+			 * k=4 ;  mu-2sigma ~ mu-sigma
+			 * k=5 ;  mu-sigma  ~ mu
+			 * k=6 ;  mu  ~ mu+sigma
+			 * k=7 ;  mu+sigma  ~ mu+2sigma 
+			 * k=8 ;  mu+2sigma  ~ mu+3sigma
+			 * k=9 ;  mu+3sigma  ~ mu+4sigma
+			 * k=10 ;  mu+4sigma  ~ infinite
+			 * 
+			 */
+			double upper_k1  = 0;
+			double lower_k1  = Double.NEGATIVE_INFINITY;
+			
+			double upper_k2  = muInput-3*sigmaInput;
+			double lower_k2  = muInput-4*sigmaInput;
+			
+			double upper_k3  = muInput-2*sigmaInput;
+			double lower_k3  = muInput-3*sigmaInput;
+			
+			double upper_k4  = muInput-sigmaInput;
+			double lower_k4  = muInput-2*sigmaInput;
+			
+			double upper_k5  = muInput;
+			double lower_k5  = muInput-sigmaInput;
+			
+			double upper_k6  = muInput+sigmaInput;
+			double lower_k6  = muInput;
+			
+			double upper_k7  = muInput+sigmaInput;
+			double lower_k7  = muInput+2*sigmaInput;
+			
+			double upper_k8  = muInput+3*sigmaInput;
+			double lower_k8  = muInput+2*sigmaInput;
+			
+			double upper_k9  = muInput+4*sigmaInput;
+			double lower_k9  = muInput+3*sigmaInput;
+			
+			double upper_k10 = Double.POSITIVE_INFINITY;
+			double lower_k10 = muInput+4*sigmaInput;
+
+				/*
+				 * 3.1.1 計算各組的機率值Pr_ki, i=1,2,3,...,10
+				 * 定積分常態分部函數
+				 * f(x)= (1/(2*mu*(sigma^(2)))^(2) ) * exp^((-1*(x-mu)^(2))/(2*sigma^(2)))
+				 * 上部分
+				 * 
+				 * 下部分
+				 * 
+				 */
+
+
+			double Pr_k1 = 0.423; //積分式有問題
+			double Pr_k2 = 0;
+			double Pr_k3 = 0;
+			double Pr_k4 = 0;
+			double Pr_k5 = 0;
+			double Pr_k6 = 0;
+			double Pr_k7 = 0;
+			double Pr_k8 = 0;
+			double Pr_k9 = 0;
+			double Pr_k10 = 0;
+			/*
+			 * 檢查每一組的機率值
+			 */
+			System.out.println("K_1的機率為"+Pr_k1);
+			System.out.println("K_2的機率為"+Pr_k2);
+			System.out.println("K_3的機率為"+Pr_k3);
+			System.out.println("K_4的機率為"+Pr_k4);
+			System.out.println("K_5的機率為"+Pr_k5);
+			System.out.println("K_6的機率為"+Pr_k6);
+			System.out.println("K_7的機率為"+Pr_k7);
+			System.out.println("K_8的機率為"+Pr_k8);
+			System.out.println("K_9的機率為"+Pr_k9);
+			System.out.println("K_10的機率為"+Pr_k10);
+
+			
+			/*
+			 * Step3.2.計算各組理論次數(e_{i})
+			 * 預定化分組數，如果預計次數
+			 */
+			
+				/*
+				 * Step3.2.1. 計算理論出現次數
+	 			 *  		        第k組出線的理論次數為第k組的理論機率Pr(K=k)*n
+				 */
+			double e_k1 = Math.round(Pr_k1*SampleNumInput); 
+			double e_k2 = Math.round(Pr_k2*SampleNumInput);
+			double e_k3 = Math.round(Pr_k3*SampleNumInput);
+			double e_k4 = Math.round(Pr_k4*SampleNumInput);
+			double e_k5 = Math.round(Pr_k5*SampleNumInput);
+			double e_k6 = Math.round(Pr_k6*SampleNumInput);
+			double e_k7 = Math.round(Pr_k7*SampleNumInput);
+			double e_k8 = Math.round(Pr_k8*SampleNumInput);
+			double e_k9 = Math.round(Pr_k9*SampleNumInput);
+			double e_k10 = Math.round(Pr_k10*SampleNumInput);
+			/*
+			 * 檢查每一組的理論出現次數
+			 */
+		
+			System.out.println("K_1的理論出現次數為"+e_k1);
+			System.out.println("K_2的理論出現次數為"+e_k2);
+			System.out.println("K_3的理論出現次數為"+e_k3);
+			System.out.println("K_4的理論出現次數為"+e_k4);
+			System.out.println("K_5的理論出現次數為"+e_k5);
+			System.out.println("K_6的理論出現次數為"+e_k6);
+			System.out.println("K_7的理論出現次數為"+e_k7);
+			System.out.println("K_8的理論出現次數為"+e_k8);
+			System.out.println("K_9的理論出現次數為"+e_k9);
+			System.out.println("K_10的理論出現次數為"+e_k10);
+			/*
+			 * Step3.3.計算各組實際觀察次數(o_{i})
+			 */
+			
+			System.out.println("請輸入在k1區間的出現次數");
+			java.util.Scanner o_k1InputData = new
+			        java.util.Scanner(System.in);
+					double o_k1Input = o_k1InputData.nextDouble();
+			
+			System.out.println("請輸入在k1區間的出現次數");
+			java.util.Scanner o_k2InputData = new
+			        java.util.Scanner(System.in);
+					double o_k2Input = o_k2InputData.nextDouble();
+			
+			System.out.println("請輸入在k3區間的出現次數");
+			java.util.Scanner o_k3InputData = new
+			        java.util.Scanner(System.in);
+					double o_k3Input = o_k3InputData.nextDouble();
+
+			System.out.println("請輸入在k4區間的出現次數");
+			java.util.Scanner o_k4InputData = new
+			        java.util.Scanner(System.in);
+					double o_k4Input = o_k4InputData.nextDouble();
+
+			System.out.println("請輸入在k5區間的出現次數");
+			java.util.Scanner o_k5InputData = new
+			        java.util.Scanner(System.in);
+					double o_k5Input = o_k5InputData.nextDouble();
+
+			System.out.println("請輸入在k6區間的出現次數");
+			java.util.Scanner o_k6InputData = new
+			        java.util.Scanner(System.in);
+					double o_k6Input = o_k6InputData.nextDouble();
+	
+			System.out.println("請輸入在k7區間的出現次數");
+			java.util.Scanner o_k7InputData = new
+			        java.util.Scanner(System.in);
+					double o_k7Input = o_k7InputData.nextDouble();
+		
+			System.out.println("請輸入在k8區間的出現次數");
+			java.util.Scanner o_k8InputData = new
+			        java.util.Scanner(System.in);
+					double o_k8Input = o_k8InputData.nextDouble();
+		
+			System.out.println("請輸入在k9區間的出現次數");
+			java.util.Scanner o_k9InputData = new
+			        java.util.Scanner(System.in);
+					double o_k9Input = o_k9InputData.nextDouble();
+		
+			System.out.println("請輸入在k10區間的出現次數");
+			java.util.Scanner o_k10InputData = new
+			        java.util.Scanner(System.in);
+					double o_k10Input = o_k10InputData.nextDouble();
+		
+			/*
+			 * 檢查每一組的實際出現次數
+			 */
+		
+			System.out.println("K_1的實際出現次數為"+o_k1Input);
+			System.out.println("K_2的實際出現次數為"+o_k2Input);
+			System.out.println("K_3的實際出現次數為"+o_k3Input);
+			System.out.println("K_4的實際出現次數為"+o_k4Input);
+			System.out.println("K_5的實際出現次數為"+o_k5Input);
+			System.out.println("K_6的實際出現次數為"+o_k6Input);
+			System.out.println("K_7的實際出現次數為"+o_k7Input);
+			System.out.println("K_8的實際出現次數為"+o_k8Input);
+			System.out.println("K_9的實際出現次數為"+o_k9Input);
+			System.out.println("K_10的實際出現次數為"+o_k10Input);
+			/*
+			 * Step3.4.計算統計量值 \sum_{i=1}^{k}  \frac{((o_{i}-e_{i})^(2))}{e_{i}}
+			 */
+			
+		/*
+		 * Step4. 計算P-value
+		 */
+			
+		/*
+		 * Step5. 檢定結果
+		 */
+	}
+	
 }
