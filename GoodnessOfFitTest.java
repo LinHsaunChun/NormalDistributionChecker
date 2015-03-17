@@ -42,7 +42,8 @@ public class GoodnessOfFitTest{
 		        java.util.Scanner(System.in);
 				double sigmaInput = sigmaInputData.nextDouble();
 		System.out.println("你要檢定的常態分布的平均數值 (mu)為"+muInput+"變異數值 (sigma)為"+sigmaInput);
-		System.out.println("虛無假設(H_{0})為該觀察資料符合常態分布平均數"+muInput+"變異數"+sigmaInput);
+		System.out.println("虛無假設(H_{0})為該觀察資料不符合常態分布平均數"+muInput+"變異數"+sigmaInput);
+		System.out.println("對立假設(H_{1})為該觀察資料符合常態分布平均數"+muInput+"變異數"+sigmaInput);
 		/*
 		 * Step2.輸入信心水準(1 - alpha %)
 		 */
@@ -179,78 +180,104 @@ public class GoodnessOfFitTest{
 			System.out.println("請輸入在k1區間的出現次數");
 			java.util.Scanner o_k1InputData = new
 			        java.util.Scanner(System.in);
-					double o_k1Input = o_k1InputData.nextDouble();
+					double o_k1 = o_k1InputData.nextDouble();
 			
 			System.out.println("請輸入在k1區間的出現次數");
 			java.util.Scanner o_k2InputData = new
 			        java.util.Scanner(System.in);
-					double o_k2Input = o_k2InputData.nextDouble();
+					double o_k2 = o_k2InputData.nextDouble();
 			
 			System.out.println("請輸入在k3區間的出現次數");
 			java.util.Scanner o_k3InputData = new
 			        java.util.Scanner(System.in);
-					double o_k3Input = o_k3InputData.nextDouble();
+					double o_k3 = o_k3InputData.nextDouble();
 
 			System.out.println("請輸入在k4區間的出現次數");
 			java.util.Scanner o_k4InputData = new
 			        java.util.Scanner(System.in);
-					double o_k4Input = o_k4InputData.nextDouble();
+					double o_k4 = o_k4InputData.nextDouble();
 
 			System.out.println("請輸入在k5區間的出現次數");
 			java.util.Scanner o_k5InputData = new
 			        java.util.Scanner(System.in);
-					double o_k5Input = o_k5InputData.nextDouble();
+					double o_k5 = o_k5InputData.nextDouble();
 
 			System.out.println("請輸入在k6區間的出現次數");
 			java.util.Scanner o_k6InputData = new
 			        java.util.Scanner(System.in);
-					double o_k6Input = o_k6InputData.nextDouble();
+					double o_k6 = o_k6InputData.nextDouble();
 	
 			System.out.println("請輸入在k7區間的出現次數");
 			java.util.Scanner o_k7InputData = new
 			        java.util.Scanner(System.in);
-					double o_k7Input = o_k7InputData.nextDouble();
+					double o_k7 = o_k7InputData.nextDouble();
 		
 			System.out.println("請輸入在k8區間的出現次數");
 			java.util.Scanner o_k8InputData = new
 			        java.util.Scanner(System.in);
-					double o_k8Input = o_k8InputData.nextDouble();
+					double o_k8 = o_k8InputData.nextDouble();
 		
 			System.out.println("請輸入在k9區間的出現次數");
 			java.util.Scanner o_k9InputData = new
 			        java.util.Scanner(System.in);
-					double o_k9Input = o_k9InputData.nextDouble();
+					double o_k9 = o_k9InputData.nextDouble();
 		
 			System.out.println("請輸入在k10區間的出現次數");
 			java.util.Scanner o_k10InputData = new
 			        java.util.Scanner(System.in);
-					double o_k10Input = o_k10InputData.nextDouble();
+					double o_k10 = o_k10InputData.nextDouble();
 		
 			/*
 			 * 檢查每一組的實際出現次數
 			 */
-		
-			System.out.println("K_1的實際出現次數為"+o_k1Input);
-			System.out.println("K_2的實際出現次數為"+o_k2Input);
-			System.out.println("K_3的實際出現次數為"+o_k3Input);
-			System.out.println("K_4的實際出現次數為"+o_k4Input);
-			System.out.println("K_5的實際出現次數為"+o_k5Input);
-			System.out.println("K_6的實際出現次數為"+o_k6Input);
-			System.out.println("K_7的實際出現次數為"+o_k7Input);
-			System.out.println("K_8的實際出現次數為"+o_k8Input);
-			System.out.println("K_9的實際出現次數為"+o_k9Input);
-			System.out.println("K_10的實際出現次數為"+o_k10Input);
+
+			System.out.println("K_1的實際出現次數為"+o_k1);
+			System.out.println("K_2的實際出現次數為"+o_k2);
+			System.out.println("K_3的實際出現次數為"+o_k3);
+			System.out.println("K_4的實際出現次數為"+o_k4);
+			System.out.println("K_5的實際出現次數為"+o_k5);
+			System.out.println("K_6的實際出現次數為"+o_k6);
+			System.out.println("K_7的實際出現次數為"+o_k7);
+			System.out.println("K_8的實際出現次數為"+o_k8);
+			System.out.println("K_9的實際出現次數為"+o_k9);
+			System.out.println("K_10的實際出現次數為"+o_k10);
 			/*
 			 * Step3.4.計算統計量值 \sum_{i=1}^{k}  \frac{((o_{i}-e_{i})^(2))}{e_{i}}
 			 */
+			double F_k1 = Math.pow(o_k1-e_k1, 2)/e_k1;
+			double F_k2 = Math.pow(o_k2-e_k2, 2)/e_k2;
+			double F_k3 = Math.pow(o_k3-e_k3, 2)/e_k3;
+			double F_k4 = Math.pow(o_k4-e_k4, 2)/e_k4;
+			double F_k5 = Math.pow(o_k5-e_k5, 2)/e_k5;
+			double F_k6 = Math.pow(o_k6-e_k6, 2)/e_k6;
+			double F_k7 = Math.pow(o_k7-e_k7, 2)/e_k7;
+			double F_k8 = Math.pow(o_k8-e_k8, 2)/e_k8;
+			double F_k9 = Math.pow(o_k9-e_k9, 2)/e_k9;
+			double F_k10 = Math.pow(o_k10-e_k10, 2)/e_k10;
+			double final_F = F_k1+F_k2+F_k3+F_k4+F_k5+F_k6+F_k7+F_k8+F_k9+F_k10;
 			
 		/*
-		 * Step4. 計算P-value
+		 * Step4. 計算P-value  **積分問題
 		 */
 			
+			// double P_value = 卡方函數統計值積分到無限大;
 		/*
 		 * Step5. 檢定結果
+		 * 如果比統計值還大的機率函數面積小於0.05，則顯示 
+		 * "Reject H_0，有足夠證據推翻，即為該觀察資料符合常態分布平均數"+muInput+"變異數"+sigmaInput"
+		 * 否則顯示
+		 * "Do not reject H_0，沒有足夠證據推翻，該觀察資料符合常態分布平均數"+muInput+"變異數"+sigmaInput"
 		 */
+			if(P_value<=0.05)
+			{
+				System.out.println("Reject H_0，有足夠證據推翻，該觀察資料不符合常態分布平均數"+muInput+"變異數"+sigmaInput);
+				System.out.println("意謂該觀察數量分部服從常態分部，平均數"+muInput+"變異數"+sigmaInput);
+			}
+			else
+			{
+				System.out.println("Do not reject H_0，沒有足夠證據推翻，該觀察資料不符合常態分布平均數"+muInput+"變異數"+sigmaInput);
+				System.out.println("意謂該觀察數量分部不服從常態分部，平均數"+muInput+"變異數"+sigmaInput);
+			}
 	}
 	
 }
